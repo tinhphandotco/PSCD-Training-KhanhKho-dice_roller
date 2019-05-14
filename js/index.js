@@ -3,11 +3,11 @@ $(document).ready(function () {
 	output ="&#x2685; "+"&#x2685; ";
 	document.getElementById('dice').innerHTML = output;
 	$('#shaker').on('click', function() {
-		$('h1').text('Shake, shake, shake...');
-		$('h1').addClass('shake');
+		$('#text').text('Shake, shake, shake...');
+		$('#text').addClass('shake');
 		setTimeout(function(){
 			rollTheDice();
-			$('h1').removeClass('shake');
+			$('#text').removeClass('shake');
 		}, 200);
 	});	
 	function rollTheDice()
@@ -25,10 +25,10 @@ $(document).ready(function () {
         document.getElementById('dice').innerHTML = output;
         if ((number)==diceCount)
         {
-        	document.getElementById('title').innerHTML = "Snake eyes!";
+        	document.getElementById('text').innerHTML = "Snake eyes!";
         } 
         else {
-        	document.getElementById('title').innerHTML = number;
+        	document.getElementById('text').innerHTML = number;
         }
         
     }
