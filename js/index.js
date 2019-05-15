@@ -1,12 +1,12 @@
 $(document).ready(function () {
 	//elements
-	const eleTextNumber = document.querySelector('input[type=number]');
-	const eleDice = document.getElementById('dice');
-	const eleText =document.getElementById('text');
+	const eleTextNumber = $('#textNumber');
+	const eleDice = $('#dice');
+	const eleText = $('#text');
 
 	//variables
 	const delayTime = 300;
-	var output;
+	let output;
 	const point = "&#x268" ;
 	const textSnake = "Snake eyes!";
 	const textShake = 'Shake, shake, shake...';
@@ -27,10 +27,20 @@ $(document).ready(function () {
 	const clickButton = () => {
 		$('#text').text(textShake);
 		$('#text').addClass('shake');
-		setTimeout(function(){
-			rollTheDice();
-			$('#text').removeClass('shake');
-		}, delayTime);
+		rollTheDice()
+		.then((number) =>{
+		if ((number)==2)
+		{
+			eleText.html(textSnake);
+		} 
+		else {
+			eleText.html(number);
+		}
+		$('#text').removeClass('shake');
+		})
+		.catch((err) => {
+			console.log("ERROR: ", err.message)
+		})
 	}
 
 	//function xu li khi nhan nut shake
@@ -39,31 +49,27 @@ $(document).ready(function () {
 		number=0,
 		faceValue,
 		output = '';
-		var diceCount = eleTextNumber.value || 2;
+		let diceCount = eleTextNumber.val() || 2;
 		for (i = 0; i < diceCount; i++) {
 			faceValue = Math.floor(Math.random() * 6);
 			number+=(faceValue+1);
 			output += point + faceValue + "; ";
 		}
-		eleDice.innerHTML = output;
-		if ((number)==diceCount)
-		{
-			eleText.innerHTML = textSnake;
-		} 
-		else {
-			eleText.innerHTML = number;
-		}
-
+		eleDice.html(output) ;
+		return new Promise ((resolve,reject) =>{
+			setTimeout(() => {
+				resolve(number)
+			}, delayTime);
+		})
 	}
 	//Function init
 	const init = () => {
 		pressBtn('#shaker');   	
 		output ="&#x2685; "+"&#x2685; ";
-		eleDice.innerHTML = output;
+		eleDice.html(output);
 	}
 	
 	init();
-	$('#shaker').on('click', function(){
-		clickButton();
-	});
+	$('#shaker').on('click', clickButton);
+	
 });
