@@ -9,7 +9,12 @@ body {
 	color: #3300cc;
 	overflow: scroll;
 }
-
+input[type=number] {
+	width: 100px;
+	color: red;
+	height: 50px; 
+	background-color: #46d11d;
+}
 #main_container {
 	padding-bottom: 34px;
 }
@@ -21,7 +26,7 @@ body {
 	margin: 0 auto;
 	font-size: 50px;
 	text-shadow: -1px -1px 0 rgba(0,0,0,0.2),
-				  1px 1px 0 rgba(255,255,255,0.5);	
+	1px 1px 0 rgba(255,255,255,0.5);	
 }
 .shake {
 	-webkit-animation: shake 1s;
@@ -42,14 +47,14 @@ body {
 
 .btn_up {
 	box-shadow: 1px 0 0 #37a417,   0 1px 0 #2f8e14, 
-				2px 1px 0 #37a417, 1px 2px 0 #2f8e14,
-				3px 3px 1px rgba(0,0,0,0.3);	
+	2px 1px 0 #37a417, 1px 2px 0 #2f8e14,
+	3px 3px 1px rgba(0,0,0,0.3);	
 }
 
 .btn_down {
 	box-shadow: -1px 0 0 #2f8e14,   0 -1px 0 #287811, 
-				-2px -1px 0 #2f8e14, -1px -2px 0 #287811,
-				-2px -2px 1px rgba(0,0,0,0.5), 0 0 4px rgba(0,0,0,0.3) inset;
+	-2px -1px 0 #2f8e14, -1px -2px 0 #287811,
+	-2px -2px 1px rgba(0,0,0,0.5), 0 0 4px rgba(0,0,0,0.3) inset;
 }
 #links_container {
 	padding: 10px;
@@ -112,4 +117,4 @@ body {
 
 
 
-	
+
