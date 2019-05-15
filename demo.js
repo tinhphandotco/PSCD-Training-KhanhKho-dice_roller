@@ -26,26 +26,26 @@ function main() {
         // })
 
         // Promise
-        getFullName(name)
-            .then((fullname) => {
-                console.log(`Hello ${fullname}`)
-            })
-            .catch((err) => {
-                console.log("ERROR: ", err.message)
-            })
+        // getFullName(name)
+        //     .then((fullname) => {
+        //         console.log(`Hello ${fullname}`)
+        //     })
+        //     .catch((err) => {
+        //         console.log("ERROR: ", err.message)
+        //     })
 
         // ASYNC AWAIT
 
-        // try {
-        //     const fullname = await getFullName(name)
-        //     console.log(`Hello ${fullname}`)
-        // } catch(err) {
-        //     console.log("ERROR: ", err.message)
-        // }
+        try {
+            const fullname = await getFullName(name)
+            console.log(`Hello ${fullname}`)
+        } catch(err) {
+            console.log("ERROR: ", err.message)
+        }
 
     }
 
-    sayHello("Khanh")
+    sayHello("Tinh")
 }
 
 main()

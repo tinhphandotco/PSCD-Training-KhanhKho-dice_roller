@@ -56,25 +56,6 @@ input[type=number] {
 	-2px -1px 0 #2f8e14, -1px -2px 0 #287811,
 	-2px -2px 1px rgba(0,0,0,0.5), 0 0 4px rgba(0,0,0,0.3) inset;
 }
-#links_container {
-	padding: 10px;
-	font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-	font-size: 14px;
-}
-
-#links_container a {
-	color: #F5F5DC;
-	margin: 10px;
-	text-decoration: none;
-}
-
-#links_container a:visited {
-	color: #F5F5DC;
-}
-
-#links_container a:hover {
-	color: #46d11d;
-}
 
 @-webkit-keyframes shake {
 	0%, 100% {-webkit-transform: translateX(0);} 
