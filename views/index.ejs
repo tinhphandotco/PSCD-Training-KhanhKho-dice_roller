@@ -1,29 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
+<% include layouts/head %>
+<% include layouts/header %>
 
-<head>
-	<meta charset="utf-8">
-	<title>Dice Roller</title>
-	<link rel="stylesheet" href="/css/reset.css">
-	<link rel="stylesheet" href="/css/index.css">
-</head>
-
-<body id="dice_roller">
-	<div id="main_container">
-		<div id="title">
-			<h1 id="text">Hey you! Give us roll!</h1>
-		</div>
-		<div>
-			<label>Moi ban chon so Roll</label>
-			<input id="textNumber" type="number" min="1" max="6">
-		</div>
-		<div id="dice"></div>
-		<div class="button btn_up" id="shaker">
-			<div class="btn_text">Shake 'em'!</div>
-		</div>
+<div id="main_container">
+	<div id="title">
+		<h1 id="text">Hey you! Give us roll!</h1>
 	</div>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<div>
+		<label>Moi ban chon so Roll</label>
+		<input id="textNumber" type="number" min="1" max="6">
+	</div>
+	<div id="dice"></div>
+	<div class="button btn_up" id="shaker">
+		<div class="btn_text">Shake 'em'!</div>
+	</div>
 	<script src="js/index.js"></script>
-</body>
+</div>
 
-</html>
+<% include layouts/footer %>
+
