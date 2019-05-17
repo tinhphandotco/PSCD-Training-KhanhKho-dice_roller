@@ -4,6 +4,7 @@
   "description": "Study nodejs",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "NgocKhanh",
@@ -12,5 +13,8 @@
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "formidable": "^1.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.0"
   }
 }
