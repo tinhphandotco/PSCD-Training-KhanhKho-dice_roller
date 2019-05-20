@@ -116,17 +116,8 @@ footer {
 	10%, 20%, 30%, 40%, 50%, 60%, 70%, 80%, 90% {transform: translateX(-5px);} 
 }
 
-body {
-	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-	margin: 0;
-	padding-top: 50px;
-	padding-bottom: 20px;
-	line-height: 1.42857143;
-}
-h1, h2, h3, h4, h5, p {
-	margin: 0;
-	padding: 0;
-}
+
+
 nav.navbar {
 	display: block;
 	width: 100%;
@@ -146,32 +137,16 @@ nav.navbar ul {
 nav.navbar ul li{
 	float: left;
 }
+a {
+	text-decoration: none;
+}
 #sign-in-form {
+	color: white;
 	float: right;
 	padding: 0px 0px 0px 15px;
-	margin: 8px 0px;
+	margin: 15px 0px;
 }
-#sign-in-form input[type=text] {
-	box-sizing: border-box;
-	padding: 6px 12px;
-	height: 34px;
-    color: #555;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-}
-.navbar input[type=submit]  {
-	cursor: pointer;
-	box-sizing: border-box;
-	padding: 6px 12px;
-	height: 34px;
-	color: #fff;
-    background-color: #5cb85c;
-    border: 1px solid #4cae4c;
-    border-radius: 4px;
-    font-size: 14px;
-}
+
 #project-name {
 	text-decoration: none;
 	display: block;
@@ -183,97 +158,10 @@ nav.navbar ul li{
 #project-name:hover {
 	color: #ffffff;
 }
-#headcard {
-	padding: 48px 0px;
-	margin-bottom: 30px;
-    background-color: #eee;
-    box-sizing: border-box;
-}
-#headcard h1 {
-	font-size: 63px;
-	font-weight: 500;
-    line-height: 1.1;
-    margin-top: 20px;
-    margin-bottom: 10px;
-}
-#headcard p {
-	margin-bottom: 15px;
-	font-size: 21px;
-	line-height: 1.42857143;
 
-}
-#headcard button {
-	border: 1px solid #2e6da4;
-	padding: 10px 16px;
-    font-size: 18px;
-    line-height: 1.3333333;
-    border-radius: 6px;
-    color: #fff;
-    background-color: #337ab7;
-    margin-bottom: 15px;
-}
-@media screen and (max-width: 767px) {
-	#sign-in-form {
-		display: none;
-	}
-}
 .container {
 	width: 1140px;
 	margin: 0 auto;
 }
-section {
-	width: 1140px;
-	overflow: hidden;
-	margin: 0 auto;
-}
-section div {
-	width: 33.3333333%;
-	float: left;
-	box-sizing: border-box;
-	padding-left: 4px;
-	padding-right: 15px;
-}
-section h2 {
-	font-size: 30px;
-	margin-top: 20px;
-    margin-bottom: 10px;
-    font-weight: 500;
-    line-height: 1.1;
-}
-section p {
-	font-size: 14px;
-	color: #333;
-	margin-bottom: 10px;
-	line-height: 1.42857143;
-}
-section button {
-	border: none;
-	margin: 0;
-	padding: 0;
-	width: auto;
-	background: transparent;
-	padding: 6px 12px;
-	font-size: 14px;
-	line-height: 1.42857143;
-	border-radius: 4px;
-	border: 1px solid #bfbfbf;
-	margin-bottom: 10px;
-}
-section button:hover {
-	background-color: #eee;
-	cursor: pointer;
-}
-.container hr {
-	margin: 0;
-	padding: 0;
-	margin-top: 20px;
-    margin-bottom: 20px;
-    border: 0.5px solid #eee;
-}
-footer p {
-	margin: 0 0 10px;
-	font-size: 14px;
-	color: #333;
 
-}
 
