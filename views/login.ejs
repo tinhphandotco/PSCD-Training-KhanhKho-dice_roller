@@ -1,6 +1,6 @@
 <% include layouts/head %>
 <% include layouts/header %>
-<% var messageuser,messagepass,tmpuser,tmppass;%>
+<% var messageuser,messagepass,tmpuser,tmppass,messageboth;%>
 
 <link rel="stylesheet" href="/css/login.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -12,6 +12,9 @@
                 <img src="/images/user2.png" alt="Avatar">
             </div>
             <h4 class="modal-title">Member Login</h4>
+            <% if (messageboth) { %>
+            <label style="margin-top: 10px;"><%= messageboth %></label>
+            <% } %>
         </div>
         <div class="modal-body">
             <form action="login" method="post">
@@ -20,7 +23,7 @@
                     <input type="text" class="form-control" name="username" placeholder="Username"
                         value="<%- tmpuser %>">
                     <% } else { %>
-                    <input type="text" class="form-control" name="username" placeholder="Username" required="required">
+                    <input type="text" class="form-control" name="username" placeholder="Username">
                     <% } %>
 
                     <% if (messageuser) { %>
@@ -33,7 +36,7 @@
                     <input type="password" class="form-control" name="password" placeholder="Password"
                         value="<%- tmppass %>">
                     <% } else { %>
-                    <input type="password" class="form-control" name="password" placeholder="Password" required="required">
+                    <input type="password" class="form-control" name="password" placeholder="Password">
                     <% } %>
 
                     <% if (messagepass) { %>
