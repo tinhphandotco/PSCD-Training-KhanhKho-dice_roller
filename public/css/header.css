@@ -1,0 +1,47 @@
+nav.navbar {
+	display: block;
+	width: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 51px;
+	background-color: #1a1a1a;
+	overflow: hidden;
+}
+nav.navbar ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+nav.navbar ul li{
+	float: left;
+}
+a {
+	text-decoration: none;
+}
+#sign-in-form {
+	color: white;
+	float: right;
+	padding: 0px 0px 0px 15px;
+	margin: 15px 0px;
+}
+
+#project-name {
+	text-decoration: none;
+	display: block;
+	font-size: 18px;
+	line-height: 20px;
+	color: #9d9d9d;
+	padding: 15px 15px 15px 0px;
+}
+#project-name:hover {
+	color: #ffffff;
+}
+
+.container {
+	width: 1140px;
+	margin: 0 auto;
+}
+
+
