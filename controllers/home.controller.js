@@ -4,7 +4,6 @@ const viewHome = (request, response) => {
             username: request.session.userAuth.username
         });
     } else {
-        // response.render("login");
         response.redirect('/login');
     }
     response.end();

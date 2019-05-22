@@ -1,53 +1,83 @@
+const mongoose = require("mongoose");
+const bcrypt = require('bcryptjs')
+const User = require('../models/users')
+
+
 const viewLogin = (request, response) => {
-    response.render("login");
+    if (request.session.userAuth)
+        response.redirect('/')
+    else
+        response.render("login");
 };
 
-const login = (request, response) => {
-    let username = request.body.username;
-    let password = request.body.password;
+const login = async (req, res) => {
+    let username = req.body.username;
+    let password = req.body.password;
     if (username && password) {
-        if (username === 'user1' && password === "123") {
+        let user = await User.findOne({ username }).exec();
+        if (!user) {
+            res.render("login", {
+                messageboth: "Username or Password Incorrect !",
+            });
+        }
 
-            request.session.userAuth = {
+        if (!user.checkPassword(password)) {
+            res.render("login", {
+                messageboth: "Username or Password Incorrect !",
+            });
+        }
+        {
+            req.session.userAuth = {
                 username: username
             }
-            response.redirect('/');
+            res.redirect('/');
         }
-        else {
-            if (username != 'user1' || password != '123') {
-                if (username == 'user1') tmpuser = username
-                else tmpuser = '';
-                response.render("login", {
-                    messageboth: "Username or Password Incorrect !",
-                    tmpuser
-                });
-            }
-        }
+
     }
     else {
-        if (username == '' && password == '')
-            response.render("login", {
-                messageuser: "Username is not empty !",
-                messagepass: "Password is not empty !"
-            })
-        if (username == '') {
-            if (password) tmppass = password;
-            response.render("login", {
-                messageuser: "Username is not empty !",
-                tmppass
-            });
-        }
-
-        if (password == '') {
-            if (username) tmpuser = username;
-            response.render("login", {
-                messagepass: "Password is not empty !",
-                tmpuser
-            });
-        }
-
+        res.render("login", {
+            messageuser: username == '' ? "Username is not empty !" : '',
+            messagepass: password == '' ? "Password is not empty !" : ''
+        })
     }
-};
+
+}
+
+// const login = (request, response) => {
+//     try {
+//         let username = request.body.username;
+//         let password = request.body.password;
+//         if (username && password) {
+//             if (username === 'user1' && password === "123") {
+
+//                 request.session.userAuth = {
+//                     username: username
+//                 }
+//                 response.redirect('/');
+//             }
+//             else {
+//                 if (username != 'user1' || password != '123') {
+//                     if (username == 'user1') tmpuser = username
+//                     else tmpuser = '';
+//                     response.render("login", {
+//                         messageboth: "Username or Password Incorrect !",
+//                         tmpuser
+//                     });
+//                 }
+//             }
+//         }
+//         else {
+//             response.render("login", {
+//                 messageuser: username == '' ? "Username is not empty !" : '',
+//                 messagepass: password == '' ? "Password is not empty !" : ''
+//             })
+//         }
+//     } catch (error) {
+//         return response.redirect("/login");
+
+//     }
+
+// };
 
 module.exports = {
     viewLogin,

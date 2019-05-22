@@ -1,0 +1,62 @@
+<% include layouts/head %>
+<% include layouts/header %>>
+<% var message;%>
+
+<link rel="stylesheet" href="/css/register.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+
+        </div>
+
+        <div class="col-md-6 main" style="margin-top: 100px;">
+
+            <form action="register" method="post">
+
+                <h1> Signup form </h1>
+
+                <input class="box" type="text" name="firstname" placeholder="FirstName" required /><br>
+
+                <input class="box" type="text" name="lastname" placeholder="LastName" required /><br>
+
+                <input class="box" type="text" name="username" placeholder="UserName" required /><br>
+
+                <input class="box" type="email" name="email" id="email" placeholder="E-Mail " required /><br>
+
+                <input class="box" type="password" name="password" id="password" placeholder="Password " required /><br>
+
+                <input class="box" type="password" name="re_password" id="password" placeholder="Confirm Password " required /><br>
+                <%if(message) { %>
+
+                <label id="message"><%= message%></label>
+                <%}%>
+
+                <div class="col-sm-12" style="margin-top: 15px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <div class="col-sm-3" style="text-align: left;"><label> Status</label></div>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="status" name="status">
+                                <option value="active">Active</option>
+                                <option value="pending">Pending</option>
+                                <option value="block">Block</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <br>
+                <input type="submit" id="submit" value="Register" /><br>
+
+            </form>
+
+        </div>
+        <div class="col-md-3">
+        </div>
+
+    </div>
+</div>
+<% include layouts/footer %>
