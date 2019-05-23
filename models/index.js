@@ -1,4 +1,3 @@
-module.exports = [
-    "users"
-  ];
-  
+module.exports = {
+  User: require('./users')
+}

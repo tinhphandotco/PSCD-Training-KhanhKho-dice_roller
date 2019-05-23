@@ -14,7 +14,6 @@ const register = async (request, response) => {
         email,
         password,
         re_password,
-        status
     } = request.body;
 
     if (password != re_password) {
@@ -31,7 +30,6 @@ const register = async (request, response) => {
             username,
             email,
             password: hashedPassword,
-            status
         });
 
         await user.save();
