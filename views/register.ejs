@@ -1,6 +1,6 @@
 <% include layouts/head %>
 <% include layouts/header %>>
-<% var message;%>
+<% var message,messageuser,messageemail,messagepass,messagefirst,messagelast;%>
 
 <link rel="stylesheet" href="/css/register.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -18,17 +18,38 @@
 
                 <h1> Signup form </h1>
 
-                <input class="box" type="text" name="firstname" placeholder="FirstName" required /><br>
+                <input class="box" type="text" name="firstname" placeholder="FirstName" /><br>
+                <%if(messagefirst) { %>
 
-                <input class="box" type="text" name="lastname" placeholder="LastName" required /><br>
+                <label id="message"><%= messagefirst%></label>
+                <%}%>
 
-                <input class="box" type="text" name="username" placeholder="UserName" required /><br>
+                <input class="box" type="text" name="lastname" placeholder="LastName"  /><br>
+                <%if(messagelast) { %>
 
-                <input class="box" type="email" name="email" id="email" placeholder="E-Mail " required /><br>
+                <label id="message"><%= messagelast%></label>
+                <%}%>
 
-                <input class="box" type="password" name="password" id="password" placeholder="Password " required /><br>
+                <input class="box" type="text" name="username" placeholder="UserName"  /><br>
+                <%if(messageuser) { %>
 
-                <input class="box" type="password" name="re_password" id="password" placeholder="Confirm Password " required /><br>
+                <label id="message"><%= messageuser%></label>
+                <%}%>
+
+                <input class="box" type="email" name="email" id="email" placeholder="E-Mail "  /><br>
+                <%if(messageemail) { %>
+
+                <label id="message"><%= messageemail%></label>
+                <%}%>
+
+                <input class="box" type="password" name="password" id="password" placeholder="Password "  /><br>
+                <%if(messagepass) { %>
+
+                <label id="message"><%= messagepass%></label>
+                <%}%>
+
+
+                <input class="box" type="password" name="re_password" id="password" placeholder="Confirm Password "  /><br>
                 <%if(message) { %>
 
                 <label id="message"><%= message%></label>
