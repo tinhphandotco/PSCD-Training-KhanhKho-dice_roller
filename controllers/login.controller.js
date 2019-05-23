@@ -15,6 +15,8 @@ const login = async (req, res) => {
     let password = req.body.password;
     if (username && password) {
         let user = await User.findOne({ username }).exec();
+        let userActive = user.status;
+
         if (!user) {
             res.render("login", {
                 messageboth: "Username or Password Incorrect !",
@@ -24,6 +26,11 @@ const login = async (req, res) => {
         if (!user.checkPassword(password)) {
             res.render("login", {
                 messageboth: "Username or Password Incorrect !",
+            });
+        }
+        if (userActive != 'active') {
+            res.render("login", {
+                messageboth: "Wait for admin to approve",
             });
         }
         {
