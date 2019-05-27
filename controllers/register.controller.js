@@ -15,23 +15,35 @@ const register = async (request, response) => {
         password,
         re_password,
     } = request.body;
-    if (firstname && lastname && username && email && password && re_password) {
-        let user = await User.findOne({ username }).exec();
-        if (user) {
-            response.render("register", {
-                messageuser: "Username already exist"
-            });
+    try {
+        const testemail = { email: request.body.email };
+        var user = new User(testemail);
+        var err = user.joiValidate(testemail);
+        if (err) {
+            console.log('ERROR')
         }
-        let e_mail = await User.findOne({ email }).exec();
-        if (e_mail) {
-            response.render("register", {
-                messageemail: "Email already exist"
-            });
-        }
+    } catch (error) {
+        console.log(error.message)
 
+    }
+    if (firstname && lastname && username && email && password && re_password) {
+        try {
+            let user = await User.findOne({ $or: [{ username: username }, { email: email }] }).exec();
+            if (user) {
+                return response.render("register", {
+                    messageuser: user.username == username ? "Username already exist" : '',
+                    messageemail: user.email == email ? "Email already exist" : '',
+                    firstname, lastname, username, email
+
+                });
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
         if (password != re_password) {
             response.render("register", {
-                message: "Confirm password is incorrect"
+                message: "Confirm password is incorrect",
+                firstname, lastname, username, email
             });
         }
         else {
@@ -44,10 +56,17 @@ const register = async (request, response) => {
                 email,
                 password: hashedPassword,
             });
+            if (request.body['g-recaptcha-response'] === undefined || request.body['g-recaptcha-response'] === '' || request.body['g-recaptcha-response'] === null) {
 
+                return response.render('register', {
+                    messageboth: "Please check recapcha !",
+                    firstname, lastname, username, email
+                })
+            }
             await user.save();
             return response.redirect("/login");
         }
+
     }
     else {
         response.render("register", {
@@ -57,6 +76,7 @@ const register = async (request, response) => {
             messageemail: email == '' ? "Email is not empty !" : '',
             messagepass: password == '' ? "Password is not empty !" : '',
             message: re_password == '' ? "Re_password is not empty !" : '',
+            firstname, lastname, username, email
         })
     }
 

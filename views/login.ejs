@@ -1,58 +1,48 @@
 <% include layouts/head %>
 <% include layouts/header %>
-<% var messageuser,messagepass,tmpuser,tmppass,messageboth;%>
+<% var messageuser,messagepass,messageboth,username;%>
 
 <link rel="stylesheet" href="/css/login.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src='https://www.google.com/recaptcha/api.js'></script>
 
-<div class="modal-dialog modal-login">
-    <div class="modal-content">
-        <div class="modal-header">
-            <div class="avatar">
-                <img src="/images/user2.png" alt="Avatar">
+<body>
+    <div class="modal-dialog modal-login">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="avatar">
+                    <img src="/images/user2.png" alt="Avatar">
+                </div>
+                <h4 class="modal-title">Member Login</h4>
+                <label style="margin-top: 10px;"><%= messageboth %></label>
             </div>
-            <h4 class="modal-title">Member Login</h4>
-            <% if (messageboth) { %>
-            <label style="margin-top: 10px;"><%= messageboth %></label>
-            <% } %>
-        </div>
-        <div class="modal-body">
-            <form action="login" method="post">
-                <div class="form-group">
-                    <% if (tmpuser) { %>
-                    <input type="text" class="form-control" name="username" placeholder="Username"
-                        value="<%- tmpuser %>">
-                    <% } else { %>
-                    <input type="text" class="form-control" name="username" placeholder="Username">
-                    <% } %>
+            <div class="modal-body">
+                <form action="login" method="post">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="username" placeholder="Username"
+                            value="<%= username %>">
+                        <label><%= messageuser %></label>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password" placeholder="Password">
+                        <label><%= messagepass %></label>
+                    </div>
+                    <div class="form-group">
+                        <div class="g-recaptcha" data-sitekey="6LflP6UUAAAAABmAApvXMv0UIH8QEJgmGKoIHYLF"></div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" id="login"
+                            class="btn btn-primary btn-lg btn-block login-btn">Login</button>
+                    </div>
 
-                    <% if (messageuser) { %>
-                    <label><%= messageuser %></label>
-                    <% } %>
-
-                </div>
-                <div class="form-group">
-                    <% if (tmppass) { %>
-                    <input type="password" class="form-control" name="password" placeholder="Password"
-                        value="<%- tmppass %>">
-                    <% } else { %>
-                    <input type="password" class="form-control" name="password" placeholder="Password">
-                    <% } %>
-
-                    <% if (messagepass) { %>
-                    <label><%= messagepass %></label>
-                    <% } %>
-                </div>
-                <div class="form-group">
-                    <button type="submit" id="login" class="btn btn-primary btn-lg btn-block login-btn">Login</button>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <a href="#">Forgot Password?</a>
-            <a href="/register" style="margin-left: 10px;">Register</a>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a href="#">Forgot Password?</a>
+                <a href="/register" style="margin-left: 10px;">Register</a>
+            </div>
         </div>
     </div>
-</div>
+</body>
 
 <% include layouts/footer %>

@@ -1,60 +1,62 @@
 <% include layouts/head %>
 <% include layouts/header %>>
-<% var message,messageuser,messageemail,messagepass,messagefirst,messagelast;%>
+<% var message,messageuser,messageemail,messagepass,messagefirst,messagelast,messageboth;%>
+<% var firstname,lastname,username,email;%>
 
 <link rel="stylesheet" href="/css/register.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
     integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src='https://www.google.com/recaptcha/api.js'></script>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-3">
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+            </div>
 
-        </div>
+            <div class="col-md-6 main" style="margin-top: 40px;">
 
-        <div class="col-md-6 main" style="margin-top: 100px;">
+                <form action="register" method="post">
 
-            <form action="register" method="post">
+                    <h1> Signup form </h1>
 
-                <h1> Signup form </h1>
-
-                <input class="box" type="text" name="firstname" placeholder="FirstName" /><br>
-                <%if(messagefirst) { %>
-
-                <label id="message"><%= messagefirst%></label>
-                <%}%>
-
-                <input class="box" type="text" name="lastname" placeholder="LastName"  /><br>
-                <%if(messagelast) { %>
-
-                <label id="message"><%= messagelast%></label>
-                <%}%>
-
-                <input class="box" type="text" name="username" placeholder="UserName"  /><br>
-                <%if(messageuser) { %>
-
-                <label id="message"><%= messageuser%></label>
-                <%}%>
-
-                <input class="box" type="email" name="email" id="email" placeholder="E-Mail "  /><br>
-                <%if(messageemail) { %>
-
-                <label id="message"><%= messageemail%></label>
-                <%}%>
-
-                <input class="box" type="password" name="password" id="password" placeholder="Password "  /><br>
-                <%if(messagepass) { %>
-
-                <label id="message"><%= messagepass%></label>
-                <%}%>
+                    <input class="box" type="text" name="firstname" placeholder="FirstName" value="<%= firstname %>" /><br>
 
 
-                <input class="box" type="password" name="re_password" id="password" placeholder="Confirm Password "  /><br>
-                <%if(message) { %>
+                    <label id="message"><%= messagefirst%></label>
 
-                <label id="message"><%= message%></label>
-                <%}%>
-<!-- 
+
+                    <input class="box" type="text" name="lastname" placeholder="LastName" value="<%= lastname %>" /><br>
+
+
+                    <label id="message"><%= messagelast%></label>
+
+
+                    <input class="box" type="text" name="username" placeholder="UserName" value="<%= username %>" /><br>
+
+
+                    <label id="message"><%= messageuser%></label>
+
+
+                    <input class="box" type="email" name="email" id="email" placeholder="E-Mail "value="<%= email %>" /><br>
+
+
+                    <label id="message"><%= messageemail%></label>
+
+
+                    <input class="box" type="password" name="password" id="password" placeholder="Password " /><br>
+
+
+                    <label id="message"><%= messagepass%></label>
+
+
+
+                    <input class="box" type="password" name="re_password" id="password" placeholder="Confirm Password " /><br>
+
+
+                    <label id="message"><%= message%></label>
+
+                    <!-- 
                 <div class="col-sm-12" style="margin-top: 15px; margin-bottom: 20px;">
                     <div class="form-group">
                         <div class="col-sm-3" style="text-align: left;"><label> Status</label></div>
@@ -69,15 +71,24 @@
                     </div>
                 </div> -->
 
-                <br>
-                <input type="submit" id="submit" value="Register" /><br>
+                    <br>
+                    <div class="form-group">
+                        <div class="g-recaptcha" data-sitekey="6LflP6UUAAAAABmAApvXMv0UIH8QEJgmGKoIHYLF"></div>
+                    </div>
 
-            </form>
+
+                    <label id="message"><%= messageboth%></label>
+
+                    <input type="submit" id="submit" value="Register" /><br>
+
+                </form>
+
+            </div>
+            <div class="col-md-3">
+            </div>
 
         </div>
-        <div class="col-md-3">
-        </div>
-
     </div>
-</div>
+
+</body>
 <% include layouts/footer %>
