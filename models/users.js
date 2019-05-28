@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const Schema = mongoose.Schema;
+const Joi = require('@hapi/joi');
 mongoose.set('useCreateIndex', true);
-var Joi = require('joi');
 
 const UserSchema = new Schema({
     firstname: { type: String, required: true },
@@ -15,15 +15,15 @@ const UserSchema = new Schema({
         timestamps: true,
     })
 
-UserSchema.methods.joiValidate = function (obj) {
-    var schema = {
-        firstname: Joi.string().min(2).max(30).required(),
-        lastname: Joi.string().min(2).max(30).required(),
-        username: Joi.string().min(2).max(30).required(),
-        email: Joi.string().email().required(),
-        password: Joi.string().min(6).max(30).required(),
-        status: Joi.string().required(),
-    }
+UserSchema.statics.joiValidate = function (obj) {
+    const schema = Joi.object().keys({
+        // firstname: Joi.string().min(2).max(30).required(),
+        // lastname: Joi.string().min(2).max(30).required(),
+        // username: Joi.string().min(2).max(30).required(),
+        email: Joi.string().email().required()
+        // password: Joi.string().min(6).max(30).required(),
+        // status: Joi.string().required(),
+    });
     return Joi.validate(obj, schema);
 }
 

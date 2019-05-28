@@ -15,19 +15,17 @@ const register = async (request, response) => {
         password,
         re_password,
     } = request.body;
-    try {
-        const testemail = { email: request.body.email };
-        var user = new User(testemail);
-        var err = user.joiValidate(testemail);
-        if (err) {
-            console.log('ERROR')
-        }
-    } catch (error) {
-        console.log(error.message)
-
-    }
     if (firstname && lastname && username && email && password && re_password) {
+        
         try {
+            const result = User.joiValidate({
+                email: email,
+            })
+            if (result.error != null)
+            return response.render("register", {
+                messageemail: "Incorrect type email",
+                firstname, lastname, username, email
+            });
             let user = await User.findOne({ $or: [{ username: username }, { email: email }] }).exec();
             if (user) {
                 return response.render("register", {
@@ -40,6 +38,7 @@ const register = async (request, response) => {
         } catch (error) {
             console.log(error.message)
         }
+
         if (password != re_password) {
             response.render("register", {
                 message: "Confirm password is incorrect",
@@ -63,7 +62,12 @@ const register = async (request, response) => {
                     firstname, lastname, username, email
                 })
             }
-            await user.save();
+            try {
+                await user.save();
+            } catch (error) {
+                console.log(error.message)
+            }
+
             return response.redirect("/login");
         }
 

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
+request = require('request');
 
 
 const viewLogin = (request, response) => {
@@ -12,6 +13,7 @@ const viewLogin = (request, response) => {
 const login = async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
+    let user = await User.findOne({ username }).exec();
 
     if (username && password) {
         try {
@@ -21,37 +23,51 @@ const login = async (req, res) => {
                     username
                 })
             }
-            let user = await User.findOne({ username }).exec();
-            if (!user) {
-                return res.render("login", {
-                    messageboth: "Username or Password Incorrect !",
-                    username
-                });
-            }
+            const secretKey = "6LflP6UUAAAAAE5qFqHCAJVxJ4hsO-M-jXfTWzS_";
 
-            if (!user.checkPassword(password)) {
-                return res.render("login", {
-                    messageboth: "Username or Password Incorrect !",
-                    username
-                });
-            }
+            const verificationURL = "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
+            request(verificationURL, function (error, response, body) {
+                body = JSON.parse(body);
+                if (body.success !== undefined && !body.success) {
+                    return res.render('login', {
+                        messageboth: "Failed captcha verification !",
+                        username
+                    })
 
-            let userActive = user.status;
-            if (userActive != 'active') {
-                res.render("login", {
-                    messageboth: "Wait for admin to approve",
-                    username
-                });
-            }
-            {
-                req.session.userAuth = {
-                    username: username
                 }
-                res.redirect('/');
-            }
+                if (!user) {
+                    return res.render("login", {
+                        messageboth: "Username or Password Incorrect !",
+                        username
+                    });
+                }
+
+                if (!user.checkPassword(password)) {
+                    return res.render("login", {
+                        messageboth: "Username or Password Incorrect !",
+                        username
+                    });
+                }
+
+                let userActive = user.status;
+                if (userActive != 'active') {
+                    return res.render("login", {
+                        messageboth: "Wait for admin to approve",
+                        username
+                    });
+                }
+                {
+                    req.session.userAuth = {
+                        username: username
+                    }
+                    const redirectTo = req.session.redirectTo || '/';
+                    delete req.session.redirectTo;
+                    res.redirect(redirectTo);
+                }
+            });
 
         } catch (error) {
-            console.log(error.message)
+            return res.render("login")
         }
 
 

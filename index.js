@@ -1,7 +1,7 @@
 require('dotenv').config()
 require('./models')
 const express = require("express");
-const router = require('./routes/router');
+const router = require('./config/routes/router');
 const morgan = require("morgan")
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -33,26 +33,6 @@ app.set("view engine", "ejs");
 app.set("views", "./views");
 app.use(morgan(':date[web] :method :status :url'));
 app.use('/', router);
-
-// app.post('/', function(req, res) {
-//     if(req.body['g-recaptcha-response'] === undefined || req.body['g-recaptcha-response'] === '' || req.body['g-recaptcha-response'] === null)
-//     {
-//       return res.json({"responseError" : "Please select captcha first"});
-//     }
-//     const secretKey = "6LflP6UUAAAAAE5qFqHCAJVxJ4hsO-M-jXfTWzS_";
-
-//     const verificationURL = "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
-
-//     request(verificationURL,function(error,response,body) {
-//       body = JSON.parse(body);
-
-//       if(body.success !== undefined && !body.success) {
-//         return res.json({"responseError" : "Failed captcha verification"});
-//       }
-//       res.json({"responseSuccess" : "Sucess"});
-//     });
-//   });
-
 
 
 app.listen(port, () => console.log(`app listening on port ${port}!`))
