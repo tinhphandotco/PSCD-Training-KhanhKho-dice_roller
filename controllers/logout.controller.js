@@ -1,5 +1,5 @@
 const logout = (request, response) => {
-    // request.session.destroy();
+    request.session.destroy();
     response.redirect('/login');
 };
 

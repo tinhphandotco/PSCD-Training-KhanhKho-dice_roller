@@ -1,12 +1,13 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const User = mongoose.model("User");
+request = require('request');
 
 const viewRegister = (request, response) => {
     response.render("register");
 };
 
-const register = async (request, response) => {
+const register = async (req, res) => {
     const {
         firstname,
         lastname,
@@ -14,76 +15,84 @@ const register = async (request, response) => {
         email,
         password,
         re_password,
-    } = request.body;
-    if (firstname && lastname && username && email && password && re_password) {
-        
-        try {
-            const result = User.joiValidate({
-                email: email,
-            })
-            if (result.error != null)
-            return response.render("register", {
-                messageemail: "Incorrect type email",
+    } = req.body;
+    try {
+        const result = User.joiValidate({
+            firstname: firstname,
+            lastname: lastname,
+            username: username,
+            email: email,
+            password: password,
+            re_password: re_password
+        })
+        if (result.error != null)
+            return res.render("register", {
+                messagefirst: result.error.details[0].path == 'firstname' ? result.error.details[0].message : '',
+                messagelast: result.error.details[0].path == 'lastname' ? result.error.details[0].message : '',
+                messageuser: result.error.details[0].path == 'username' ? result.error.details[0].message : '',
+                messageemail: result.error.details[0].path == 'email' ? result.error.details[0].message : '',
+                messagepass: result.error.details[0].path == 'password' ? result.error.details[0].message : '',
+                message: result.error.details[0].path == 're_password' ? result.error.details[0].message : '',
                 firstname, lastname, username, email
             });
-            let user = await User.findOne({ $or: [{ username: username }, { email: email }] }).exec();
-            if (user) {
-                return response.render("register", {
-                    messageuser: user.username == username ? "Username already exist" : '',
-                    messageemail: user.email == email ? "Email already exist" : '',
-                    firstname, lastname, username, email
-
-                });
-            }
-        } catch (error) {
-            console.log(error.message)
-        }
-
-        if (password != re_password) {
-            response.render("register", {
-                message: "Confirm password is incorrect",
+        let user = await User.findOne({ $or: [{ username: username }, { email: email }] }).exec();
+        if (user) {
+            return res.render("register", {
+                messageuser: user.username == username ? "Username already exist" : '',
+                messageemail: user.email == email ? "Email already exist" : '',
                 firstname, lastname, username, email
+
             });
         }
-        else {
+    }
+    catch (error) {
+        return res.render("register", {
+            messageboth: "Register didn't success !"
+        });
+    }
 
-            const hashedPassword = bcrypt.hashSync(password, 10);
-            const user = new User({
-                firstname,
-                lastname,
-                username,
-                email,
-                password: hashedPassword,
-            });
-            if (request.body['g-recaptcha-response'] === undefined || request.body['g-recaptcha-response'] === '' || request.body['g-recaptcha-response'] === null) {
-
-                return response.render('register', {
-                    messageboth: "Please check recapcha !",
-                    firstname, lastname, username, email
-                })
-            }
-            try {
-                await user.save();
-            } catch (error) {
-                console.log(error.message)
-            }
-
-            return response.redirect("/login");
-        }
-
+    if (password != re_password) {
+        res.render("register", {
+            message: "Confirm password is incorrect",
+            firstname, lastname, username, email
+        });
     }
     else {
-        response.render("register", {
-            messagefirst: firstname == '' ? "Firstname is not empty !" : '',
-            messagelast: lastname == '' ? "Lastname is not empty !" : '',
-            messageuser: username == '' ? "Username is not empty !" : '',
-            messageemail: email == '' ? "Email is not empty !" : '',
-            messagepass: password == '' ? "Password is not empty !" : '',
-            message: re_password == '' ? "Re_password is not empty !" : '',
-            firstname, lastname, username, email
-        })
-    }
+        const hashedPassword = bcrypt.hashSync(password, 10);
+        const user = new User({
+            firstname,
+            lastname,
+            username,
+            email,
+            password: hashedPassword,
+        });
+        if (req.body['g-recaptcha-response'] === undefined || req.body['g-recaptcha-response'] === '' || req.body['g-recaptcha-response'] === null) {
+            return res.render('register', {
+                messageboth: "Please check recapcha !",
+                firstname, lastname, username, email
+            })
+        }
+        const secretKey = "6LflP6UUAAAAAE5qFqHCAJVxJ4hsO-M-jXfTWzS_";
+        const verificationURL = "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
+        request(verificationURL, function (error, response, body) {
+            body = JSON.parse(body);
+            if (body.success !== undefined && !body.success) {
+                return res.render('login', {
+                    messageboth: "Failed captcha verification !",
+                    username
+                })
+            }
+        });
+        try {
+            await user.save();
+        } catch (error) {
+            return res.render("register", {
+                messageboth: "Register didn't success !"
+            });
+        }
 
+        return res.redirect("/login");
+    }
 };
 
 module.exports = {

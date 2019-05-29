@@ -1,17 +1,24 @@
-const isLogin = (req, res, next) => {
+const requireAuth = (req, res, next) => {
     if (req.session.userAuth) {
-        return res.render("index", {
-            username: req.session.userAuth.username
-        });
+        return next();
     }
-    return next();
-};
-const logout = (req, res, next) => {
-    req.session.destroy();
-    return next();
+    else {
+        req.session.redirectTo = req.path;
+        res.redirect('/login');
+    }
 };
 
+const doNotRequriedAuth = (req, res, next) => {
+    if (req.session.userAuth) {
+        res.redirect('/');
+    }
+    else {
+        next();
+    }
+};
+
+
 module.exports = {
-    isLogin,
-    logout
+    requireAuth,
+    doNotRequriedAuth
 };

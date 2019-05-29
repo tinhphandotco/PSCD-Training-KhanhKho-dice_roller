@@ -17,12 +17,12 @@ const UserSchema = new Schema({
 
 UserSchema.statics.joiValidate = function (obj) {
     const schema = Joi.object().keys({
-        // firstname: Joi.string().min(2).max(30).required(),
-        // lastname: Joi.string().min(2).max(30).required(),
-        // username: Joi.string().min(2).max(30).required(),
-        email: Joi.string().email().required()
-        // password: Joi.string().min(6).max(30).required(),
-        // status: Joi.string().required(),
+        firstname: Joi.string().min(3).max(30).required(),
+        lastname: Joi.string().min(3).max(30).required(),
+        username: Joi.string().min(3).max(30).required(),
+        email: Joi.string().email().required(),
+        password: Joi.string().min(6).max(30).required(),
+        re_password: Joi.string().min(6).max(30).required(),
     });
     return Joi.validate(obj, schema);
 }
