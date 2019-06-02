@@ -11,14 +11,11 @@ const MONGOOSE_DB_URL = process.env.MONGOOSE_DB_URL;
 const app = express();
 const port = process.env.PORT || 3000;
 
-
-
 mongoose.connect(MONGOOSE_DB_URL, { useNewUrlParser: true });
 db.on('error', console.log.bind(console, "connection error"));
 db.once('open', function (callback) {
     console.log("connection database succeeded");
 })
-
 
 app.use(session({
     secret: 'secret',
@@ -33,7 +30,6 @@ app.set("view engine", "ejs");
 app.set("views", "./views");
 app.use(morgan(':date[web] :method :status :url'));
 app.use('/', router);
-
 
 app.listen(port, () => console.log(`app listening on port ${port}!`))
 // site_key 6LedPqUUAAAAAHLd0CPmQBLAL9WIJX8m7tZeMotY

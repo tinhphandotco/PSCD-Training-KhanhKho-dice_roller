@@ -3,31 +3,30 @@ const User = mongoose.model("User");
 request = require('request');
 
 const viewLogin = (request, response) => {
-        response.render("login");
+    response.render("login");
 };
+
+const checkRecapcha = (req) => {
+    return new Promise((resolve, reject) => {
+        const secretKey = "6LflP6UUAAAAAE5qFqHCAJVxJ4hsO-M-jXfTWzS_";
+        const verificationURL = "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
+        request(verificationURL, function (error, response, body) {
+            body = JSON.parse(body);
+            if (error || body.success == false)
+                reject(body);
+            else
+                resolve(body);
+        });
+    });
+}
 
 const login = async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
     let user = await User.findOne({ username }).exec();
     if (username && password) {
-        try {
-            if (req.body['g-recaptcha-response'] === undefined || req.body['g-recaptcha-response'] === '' || req.body['g-recaptcha-response'] === null) {
-                return res.render('login', {
-                    messageboth: "Please check recapcha !",
-                    username
-                })
-            }
-            const secretKey = "6LflP6UUAAAAAE5qFqHCAJVxJ4hsO-M-jXfTWzS_";
-            const verificationURL = "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
-            request(verificationURL, function (error, response, body) {
-                body = JSON.parse(body);
-                if (body.success !== undefined && !body.success) {
-                    return res.render('login', {
-                        messageboth: "Failed captcha verification !",
-                        username
-                    })
-                }
+        checkRecapcha(req)
+            .then(() => {
                 if (!user) {
                     return res.render("login", {
                         messageboth: "Username or Password Incorrect !",
@@ -55,13 +54,16 @@ const login = async (req, res) => {
                     delete req.session.redirectTo;
                     res.redirect(redirectTo);
                 }
-            });
-
-        } catch (error) {
-            return res.render("login", {
-                messageboth: "Login didn't success"
             })
-        }
+            .catch((body) => {
+                if (body.success !== undefined && !body.success) {
+                    return res.render('login', {
+                        messageboth: "Failed captcha verification !",
+                        username
+                    })
+                }
+
+            })
     }
     else {
         res.render("login", {

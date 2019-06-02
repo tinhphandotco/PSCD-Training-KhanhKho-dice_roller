@@ -7,6 +7,20 @@ const viewRegister = (request, response) => {
     response.render("register");
 };
 
+const checkRecapcha = (req) => {
+    return new Promise((resolve, reject) => {
+        const secretKey = "6LflP6UUAAAAAE5qFqHCAJVxJ4hsO-M-jXfTWzS_";
+        const verificationURL = "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
+        request(verificationURL, function (error, response, body) {
+            body = JSON.parse(body);
+            if (error || body.success == false)
+                reject(body);
+            else
+                resolve(body);
+        });
+    });
+}
+
 const register = async (req, res) => {
     const {
         firstname,
@@ -25,16 +39,19 @@ const register = async (req, res) => {
             password: password,
             re_password: re_password
         })
-        if (result.error != null)
+        if (result.error != null) {
+            const arrayError = result.error.details[0];
             return res.render("register", {
-                messagefirst: result.error.details[0].path == 'firstname' ? result.error.details[0].message : '',
-                messagelast: result.error.details[0].path == 'lastname' ? result.error.details[0].message : '',
-                messageuser: result.error.details[0].path == 'username' ? result.error.details[0].message : '',
-                messageemail: result.error.details[0].path == 'email' ? result.error.details[0].message : '',
-                messagepass: result.error.details[0].path == 'password' ? result.error.details[0].message : '',
-                message: result.error.details[0].path == 're_password' ? result.error.details[0].message : '',
+                messagefirst: arrayError.path == 'firstname' ? arrayError.message : '',
+                messagelast: arrayError.path == 'lastname' ? arrayError.message : '',
+                messageuser: arrayError.path == 'username' ? arrayError.message : '',
+                messageemail: arrayError.path == 'email' ? arrayError.message : '',
+                messagepass: arrayError.path == 'password' ? arrayError.message : '',
+                message: arrayError.path == 're_password' ? arrayError.message : '',
                 firstname, lastname, username, email
             });
+        }
+
         let user = await User.findOne({ $or: [{ username: username }, { email: email }] }).exec();
         if (user) {
             return res.render("register", {
@@ -58,40 +75,33 @@ const register = async (req, res) => {
         });
     }
     else {
-        const hashedPassword = bcrypt.hashSync(password, 10);
-        const user = new User({
-            firstname,
-            lastname,
-            username,
-            email,
-            password: hashedPassword,
-        });
-        if (req.body['g-recaptcha-response'] === undefined || req.body['g-recaptcha-response'] === '' || req.body['g-recaptcha-response'] === null) {
-            return res.render('register', {
-                messageboth: "Please check recapcha !",
-                firstname, lastname, username, email
+        checkRecapcha(req)
+            .then(() => {
+                const hashedPassword = bcrypt.hashSync(password, 10);
+                const user = new User({
+                    firstname,
+                    lastname,
+                    username,
+                    email,
+                    password: hashedPassword,
+                });
+                try {
+                    user.save();
+                } catch (error) {
+                    return res.render("register", {
+                        messageboth: "Register didn't success !"
+                    });
+                }
+                return res.redirect("/login");
             })
-        }
-        const secretKey = "6LflP6UUAAAAAE5qFqHCAJVxJ4hsO-M-jXfTWzS_";
-        const verificationURL = "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
-        request(verificationURL, function (error, response, body) {
-            body = JSON.parse(body);
-            if (body.success !== undefined && !body.success) {
-                return res.render('login', {
-                    messageboth: "Failed captcha verification !",
-                    username
-                })
-            }
-        });
-        try {
-            await user.save();
-        } catch (error) {
-            return res.render("register", {
-                messageboth: "Register didn't success !"
-            });
-        }
-
-        return res.redirect("/login");
+            .catch((body) => {
+                if (body.success !== undefined && !body.success) {
+                    return res.render('register', {
+                        messageboth: "Failed captcha verification !",
+                        firstname, lastname, username, email
+                    })
+                }
+            })
     }
 };
 

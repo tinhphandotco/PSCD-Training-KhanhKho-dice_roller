@@ -37,6 +37,7 @@ $(document).ready(function () {
 				}
 				$('#text').removeClass('shake');
 				eleDice.html(data.output);
+				$('#result').html(data.number);//
 			})
 			.catch((err) => {
 				console.log("ERROR: ", err.message)

@@ -24,7 +24,7 @@ UserSchema.statics.joiValidate = function (obj) {
         password: Joi.string().min(6).max(30).required(),
         re_password: Joi.string().min(6).max(30).required(),
     });
-    return Joi.validate(obj, schema);
+    return Joi.validate(obj, schema, { abortEarly: false });
 }
 
 UserSchema.methods.checkPassword = function (password) {
