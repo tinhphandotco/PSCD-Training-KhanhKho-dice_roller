@@ -2,24 +2,11 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const User = mongoose.model("User");
 request = require('request');
+const { checkRecapcha } = require("../utils");
 
 const viewRegister = (request, response) => {
     response.render("register");
 };
-
-const checkRecapcha = (req) => {
-    return new Promise((resolve, reject) => {
-        const secretKey = "6LflP6UUAAAAAE5qFqHCAJVxJ4hsO-M-jXfTWzS_";
-        const verificationURL = "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
-        request(verificationURL, function (error, response, body) {
-            body = JSON.parse(body);
-            if (error || body.success == false)
-                reject(body);
-            else
-                resolve(body);
-        });
-    });
-}
 
 const register = async (req, res) => {
     const {
@@ -31,6 +18,7 @@ const register = async (req, res) => {
         re_password,
     } = req.body;
     try {
+
         const result = User.joiValidate({
             firstname: firstname,
             lastname: lastname,
@@ -75,7 +63,7 @@ const register = async (req, res) => {
         });
     }
     else {
-        checkRecapcha(req)
+        checkRecapcha.checkRecapcha(req)
             .then(() => {
                 const hashedPassword = bcrypt.hashSync(password, 10);
                 const user = new User({
@@ -95,12 +83,10 @@ const register = async (req, res) => {
                 return res.redirect("/login");
             })
             .catch((body) => {
-                if (body.success !== undefined && !body.success) {
-                    return res.render('register', {
-                        messageboth: "Failed captcha verification !",
-                        firstname, lastname, username, email
-                    })
-                }
+                return res.render('register', {
+                    messageboth: "Failed captcha verification !",
+                    firstname, lastname, username, email
+                })
             })
     }
 };
