@@ -1,5 +1,5 @@
-const checkRecapcha = require("./checkRecapcha");
+const Recapcha = require("./checkRecapcha");
 
 module.exports = {
-    checkRecapcha
+    Recapcha
 }

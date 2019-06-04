@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const User = mongoose.model("User");
 request = require('request');
-const { checkRecapcha } = require("../utils");
+const { Recapcha } = require("../utils");
 
 const viewRegister = (request, response) => {
     response.render("register");
@@ -28,14 +28,19 @@ const register = async (req, res) => {
             re_password: re_password
         })
         if (result.error != null) {
-            const arrayError = result.error.details[0];
+            const arrayError = result.error.details;
+            const obj = arrayError.reduce(function (acc, cur) {
+                let pathname = cur.path[0];
+                acc[pathname] = cur.message;
+                return acc;
+            }, {});
             return res.render("register", {
-                messagefirst: arrayError.path == 'firstname' ? arrayError.message : '',
-                messagelast: arrayError.path == 'lastname' ? arrayError.message : '',
-                messageuser: arrayError.path == 'username' ? arrayError.message : '',
-                messageemail: arrayError.path == 'email' ? arrayError.message : '',
-                messagepass: arrayError.path == 'password' ? arrayError.message : '',
-                message: arrayError.path == 're_password' ? arrayError.message : '',
+                messagefirst: obj.firstname,
+                messagelast: obj.lastname,
+                messageuser: obj.username,
+                messageemail: obj.email,
+                messagepass: obj.password,
+                message: obj.re_password,
                 firstname, lastname, username, email
             });
         }
@@ -63,7 +68,7 @@ const register = async (req, res) => {
         });
     }
     else {
-        checkRecapcha.checkRecapcha(req)
+        Recapcha.checkRecapcha(req)
             .then(() => {
                 const hashedPassword = bcrypt.hashSync(password, 10);
                 const user = new User({

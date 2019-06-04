@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
 request = require('request');
-const { checkRecapcha} = require("../utils");
+const { Recapcha} = require("../utils");
 
 const viewLogin = (request, response) => {
     response.render("login");
@@ -13,7 +13,7 @@ const login = async (req, res) => {
     let password = req.body.password;
     let user = await User.findOne({ username }).exec();
     if (username && password) {
-        checkRecapcha.checkRecapcha(req)
+        Recapcha.checkRecapcha(req)
             .then(() => {
                 if (!user) {
                     return res.render("login", {

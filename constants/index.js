@@ -1,5 +1,5 @@
-const urlRecapcha = require("./urlRecapcha");
+const URL_RECAPCHA_API="https://www.google.com/recaptcha/api/siteverify?secret=";
 
-module.exports = {
-    urlRecapcha
+module.exports={
+    URL_RECAPCHA_API
 }
