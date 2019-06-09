@@ -42,7 +42,6 @@ const diceGame = (io) => {
                             number : data.number,
                             point : data.output
                         }
-                      
                         io.sockets.emit('result', result);
                     })
                     .catch((err) => {
@@ -56,22 +55,20 @@ const diceGame = (io) => {
     io.on('connection', function (socket) {
         console.log('a user connected');
         socket.emit('time', start);
-        socket.on('disconnect', function () {
-            console.log('user disconnected');
-        });
         socket.on('totalcoin', function (data) {
             User.updateOne({ username: data.username }, {
                 coin: data.coin
             }, function (err, affected, resp) {
             })
         });
-
         socket.on('detailOrder', function (data) {
             io.emit('detailOrder', data);
         });
-
         socket.on('username', function (username) {
             io.emit('username', username);
+        });
+        socket.on('disconnect', function () {
+            console.log('user disconnected');
         });
     });
 }

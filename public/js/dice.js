@@ -65,7 +65,6 @@ $(document).ready(function () {
 
 	$("#even").click(function () {
 		if ($("#monney").val() != '') {
-			let coin = parseInt($('#coin').text());
 			let moneyOrder = parseInt($('#monney').val());
 			let detailOrder = {
 				username: username,
@@ -74,7 +73,8 @@ $(document).ready(function () {
 			};
 			socket.emit('detailOrder', detailOrder);
 			socket.on('result', function (data) {
-				if (parseInt(data.number) % 2 == 0) {
+				let coin = parseInt($('#coin').text());		
+				if (parseInt(data.number) % 2 == 0) {				
 					$('#coin').html(parseInt(moneyOrder + coin));
 					var datails = {
 						coin: parseInt(moneyOrder + coin),
@@ -82,7 +82,7 @@ $(document).ready(function () {
 					}
 					socket.emit('totalcoin', datails);
 				}
-				else {
+				else {		
 					$('#coin').html(parseInt(coin - moneyOrder));
 					var datails = {
 						coin: parseInt(coin - moneyOrder),
@@ -104,7 +104,6 @@ $(document).ready(function () {
 
 	$("#odd").click(function () {
 		if ($("#monney").val() != '') {
-			let coin = parseInt($('#coin').text());
 			let moneyOrder = parseInt($('#monney').val());
 			let detailOrder = {
 				username: username,
@@ -113,6 +112,7 @@ $(document).ready(function () {
 			};
 			socket.emit('detailOrder', detailOrder);
 			socket.on('result', function (data) {
+				let coin = parseInt($('#coin').text());
 				if (parseInt(data.number) % 2 == 1) {
 					$('#coin').html(parseInt(moneyOrder + coin));
 					var datails = {
