@@ -1,6 +1,6 @@
 <% include layouts/head %>
 <% include layouts/header %>>
-<% var message,messageuser,messageemail,messagepass,messagefirst,messagelast,messageboth;%>
+<% var message,messageuser,messageemail,messagepass,messagefirst,messagelast,messageboth,messagecoin;%>
 <% var firstname,lastname,username,email;%>
 
 <link rel="stylesheet" href="/css/register.css">
@@ -55,6 +55,11 @@
 
 
                     <label id="message"><%= message%></label>
+
+                    <input class="box" id="coin" type="text" name="coin"  placeholder="Coin" /><br>
+                    <label id="message"><%= messagecoin%></label>
+
+
 
                     <!-- 
                 <div class="col-sm-12" style="margin-top: 15px; margin-bottom: 20px;">

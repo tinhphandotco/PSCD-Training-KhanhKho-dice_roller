@@ -1,7 +1,15 @@
 <% include layouts/head %>
 <% include layouts/header %>
+<% var username;%>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 
-<% var username; %>
+<script>
+	var socket = io();
+	var username = "<%= username %>";
+	socket.emit('username', username);
+</script>
+
 <nav class="navbar">
 	<div class="container">
 		<ul>
@@ -10,27 +18,56 @@
 				<a href="/" style="color: aqua; margin-right: 15px;">Home</a>
 				<a href="/vd" style="color: aqua; margin-right: 15px;">Vi du</a>
 				<a href="/dice-roller" style="color: aqua; margin-right: 15px;">DiceRoll</a>
-
 				<a href="#" style="color: aqua; margin-right: 15px;">Hello <%= username%></a>
 				<a href="/logout" style="color: rgb(205, 218, 218);">Logout</a>
-
 			</li>
 		</ul>
 	</div>
 </nav>
-<div id="main_container">
-	<div id="title">
-		<h1 id="text">Hey you! Give us roll!</h1>
+<div id="main_container1" style="float: left;">
+	<div>
+		<div id="title">
+			<h1 id="text">Hey you! Give us roll!</h1>
+		</div>
+		<div id="dice"></div>
+		<div id="title">
+			<label for="">TotalCoin</label>
+			<h1 id="coin"><%= userCoin%></h1>
+		</div>
+		<script src="/js/dice.js"></script>
 	</div>
 	<div>
-		<label>Moi ban chon so Roll</label>
-		<input id="textNumber" type="number" min="1" max="6">
+		<div class="form-group" style="width: 50%; margin: 0 auto;">
+			<input type="text" class="form-control" id="monney" placeholder="So tien dat cuoc">
+			<label for="" id="error"></label>
+		</div>
+		<div style="margin: 0 auto;display: inline;">
+			<div class="" style="width: 10%;float: left;">
+				<button type="submit" id="even" class="btn btn-primary btn-lg btn-block login-btn" style="
+				margin-left: 350px; margin-top: 40px;">EVEN</button>
+			</div>
+			<div class="" style="width: 10%;float: left;">
+				<button type="submit" id="odd" class="btn btn-primary btn-lg btn-block login-btn" style="
+				margin-left: 350px;margin-top: 40px;">ODD</button>
+			</div>
+		</div>
 	</div>
-	<div id="dice"></div>
-	<div class="button btn_up" id="shaker">
-		<div class="btn_text">Shake 'em'!</div>
+</div>
+
+<div id="main_container" style="display: inline;">
+	<div>
+		<table id="table" class="table table-dark" style="width: 40%; margin-top: 60px;">
+			<thead style="color:cadetblue;">
+				<tr>
+					<th scope="col">UserName</th>
+					<th scope="col">Dat cuoc</th>
+					<th scope="col">Lua chon</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
 	</div>
-	<script src="/js/dice.js"></script>
 </div>
 
 <% include layouts/footer %>

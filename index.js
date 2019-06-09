@@ -10,6 +10,9 @@ const db = mongoose.connection;
 const MONGOOSE_DB_URL = process.env.MONGOOSE_DB_URL;
 const app = express();
 const port = process.env.PORT || 3000;
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+const socket = require('./socket')
 
 mongoose.connect(MONGOOSE_DB_URL, { useNewUrlParser: true });
 db.on('error', console.log.bind(console, "connection error"));
@@ -31,9 +34,12 @@ app.set("views", "./views");
 app.use(morgan(':date[web] :method :status :url'));
 app.use('/', router);
 
-app.listen(port, () => console.log(`app listening on port ${port}!`))
-// site_key 6LedPqUUAAAAAHLd0CPmQBLAL9WIJX8m7tZeMotY
-// secret key 6LflP6UUAAAAAE5qFqHCAJVxJ4hsO-M-jXfTWzS_
+
+http.listen(port, function () {
+    console.log('app listening on port:' + port);
+    socket.dice.diceGame(io)
+});
+
 
 
 

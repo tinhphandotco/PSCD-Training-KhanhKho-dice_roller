@@ -1,81 +1,143 @@
+
 $(document).ready(function () {
+
+	var socket = io();
+	socket.on('detailOrder', function (data) {
+		$("#table tbody").append(
+			"<tr>" +
+			"<td>" + data.username + "</td>" +
+			"<td>" + data.moneyOrder + "</td>" +
+			"<td>" + data.stateOrder + "</td>" +
+			"</tr>"
+		);
+	});
+
 	//elements
-	const eleTextNumber = $('#textNumber');
 	const eleDice = $('#dice');
 	const eleText = $('#text');
-
-	//variables
-	const delayTime = 300;
-	let output;
-	const point = "&#x268";
-	const textSnake = "Snake eyes!";
 	const textShake = 'Shake, shake, shake...';
-
-	//function press button Shake
-	const pressBtn = (button) => {
-		$('#shaker').on('mousedown', function () {
-			$(this).removeClass('btn_up');
-			$(this).addClass('btn_down');
-		});
-		$('#shaker').on('mouseup', function () {
-			$(this).removeClass('btn_down');
-			$(this).addClass('btn_up');
-		});
-	}
+	const stateEven = "Chan";
+	const stateOdd = "Le";
+	var result;
 
 	//function callback when click
 	const clickButton = () => {
 		$('#text').text(textShake);
 		$('#text').addClass('shake');
-		rollTheDice()
-			.then((data) => {
-				if ((data.number) == data.diceCount) {
-					eleText.html(textSnake);
+		socket.on('result', function (data) {
+			eleDice.html(data.point);
+			eleText.html(data.number);
+			result = parseInt(data.number);
+			if (result % 2 == 0) {
+				$('table tr td').each(function () {
+					var texto = $(this).text();
+					if (texto == 'Chan')
+						$(this).parents("tr").css("color", "red");
+				});
+			}
+			else {
+				$('table tr td').each(function () {
+					var texto = $(this).text();
+					if (texto == 'Le')
+						$(this).parents("tr").css("color", "red");
+				});
+			}
+			setTimeout(function () {
+				$("tbody").empty();
+				$("#even").attr("disabled", false);
+				$("#odd").attr("disabled", false);
+			}, 4000);
+
+			$('#text').removeClass('shake');
+		});
+	}
+
+	socket.on('time', function (time) {
+		let interval = setInterval(function () {
+			milliseconds = Date.now() - time;
+			$('#text').text(10 - Math.round(milliseconds / 1000));
+			if (milliseconds >= 10000) {
+				clickButton();
+				clearInterval(interval);
+			}
+		}, 100);
+	})
+
+	$("#even").click(function () {
+		if ($("#monney").val() != '') {
+			let coin = parseInt($('#coin').text());
+			let moneyOrder = parseInt($('#monney').val());
+			let detailOrder = {
+				username: username,
+				moneyOrder: moneyOrder,
+				stateOrder: stateEven
+			};
+			socket.emit('detailOrder', detailOrder);
+			socket.on('result', function (data) {
+				if (parseInt(data.number) % 2 == 0) {
+					$('#coin').html(parseInt(moneyOrder + coin));
+					var datails = {
+						coin: parseInt(moneyOrder + coin),
+						username: username
+					}
+					socket.emit('totalcoin', datails);
 				}
 				else {
-					eleText.html(data.number);
+					$('#coin').html(parseInt(coin - moneyOrder));
+					var datails = {
+						coin: parseInt(coin - moneyOrder),
+						username: username
+					}
+					socket.emit('totalcoin', datails);
 				}
-				$('#text').removeClass('shake');
-				eleDice.html(data.output);
-				$('#result').html(data.number);//
-			})
-			.catch((err) => {
-				console.log("ERROR: ", err.message)
-			})
-	}
+				moneyOrder = 0;
+			});
+			$("#even").attr("disabled", true);
+			$("#odd").attr("disabled", true);
+			$("#error").text("");
+		}
+		else {
+			$("#error").text("Please input money order");
+		}
 
-	//function xu li khi nhan nut shake
-	const rollTheDice = () => {
-		
-	
-		return new Promise((resolve, reject) => {
-			let i,
-			number = 0,
-			faceValue,
-			output = '';
-			let diceCount = eleTextNumber.val() || 2;
-			for (i = 0; i < diceCount; i++) {
-			faceValue = Math.floor(Math.random() * 6);
-			number += (faceValue + 1);
-			output += point + faceValue + "; ";
-			}
-			setTimeout(() => {
-				resolve({
-					number,
-					output,
-					diceCount
-				})
-			}, delayTime);
-		})
-	}
-	//Function init
-	const init = () => {
-		pressBtn('#shaker');
-		output = "&#x2685; " + "&#x2685; ";
-		eleDice.html(output);
-	}
+	});
 
-	init();
-	$('#shaker').on('click', clickButton);
+	$("#odd").click(function () {
+		if ($("#monney").val() != '') {
+			let coin = parseInt($('#coin').text());
+			let moneyOrder = parseInt($('#monney').val());
+			let detailOrder = {
+				username: username,
+				moneyOrder: moneyOrder,
+				stateOrder: stateOdd
+			};
+			socket.emit('detailOrder', detailOrder);
+			socket.on('result', function (data) {
+				if (parseInt(data.number) % 2 == 1) {
+					$('#coin').html(parseInt(moneyOrder + coin));
+					var datails = {
+						coin: parseInt(moneyOrder + coin),
+						username: username
+					}
+					socket.emit('totalcoin', datails);
+				}
+				else {
+					$('#coin').html(parseInt(coin - moneyOrder));
+					var datails = {
+						coin: parseInt(coin - moneyOrder),
+						username: username
+					}
+					socket.emit('totalcoin', datails);
+				}
+				moneyOrder = 0;
+			});
+			$("#odd").attr("disabled", true);
+			$("#even").attr("disabled", true);
+			$("#error").text("");
+		}
+		else {
+			$("#error").text("Please input money order");
+		}
+	});
 
 });

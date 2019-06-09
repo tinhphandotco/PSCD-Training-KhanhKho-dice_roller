@@ -16,6 +16,7 @@ const register = async (req, res) => {
         email,
         password,
         re_password,
+        coin
     } = req.body;
     try {
 
@@ -25,7 +26,8 @@ const register = async (req, res) => {
             username: username,
             email: email,
             password: password,
-            re_password: re_password
+            re_password: re_password,
+            coin:coin
         })
         if (result.error != null) {
             const arrayError = result.error.details;
@@ -41,6 +43,7 @@ const register = async (req, res) => {
                 messageemail: obj.email,
                 messagepass: obj.password,
                 message: obj.re_password,
+                messagecoin: obj.coin,
                 firstname, lastname, username, email
             });
         }
@@ -77,6 +80,7 @@ const register = async (req, res) => {
                     username,
                     email,
                     password: hashedPassword,
+                    coin
                 });
                 try {
                     user.save();

@@ -1,6 +1,14 @@
-const viewHome = (request, response) => {
+
+const mongoose = require("mongoose");
+const User = mongoose.model("User");
+
+const viewHome = async (request, response) => {
+    let username= request.session.userAuth.username;
+    let user = await User.findOne({ username }).exec();
+    let userCoin=user.coin;
     response.render('index',{
-        username: request.session.userAuth.username
+        username: username,
+        userCoin:userCoin
     });
 };
 

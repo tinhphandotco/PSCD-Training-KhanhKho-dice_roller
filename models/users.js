@@ -10,6 +10,7 @@ const UserSchema = new Schema({
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    coin: { type: Number, required: true },
     status: { type: String, enum: ["active", "pending", "block"], required: true, default: "pending" }
 }, {
         timestamps: true,
@@ -23,6 +24,7 @@ UserSchema.statics.joiValidate = function (obj) {
         email: Joi.string().email().required(),
         password: Joi.string().min(6).max(30),
         re_password: Joi.string().min(6).max(30),
+        coin: Joi.number().integer()
     });
     return Joi.validate(obj, schema, { abortEarly: false });
 }
