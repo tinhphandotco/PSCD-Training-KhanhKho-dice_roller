@@ -1,5 +1,4 @@
 $(document).ready(function () {
-	//elements
 	const eleDice = $('#dice');
 	const eleText = $('#text');
 	const textShake = 'Shake, shake, shake...';
@@ -16,7 +15,9 @@ $(document).ready(function () {
 			let array = new Array();
 			array = data;
 			if (array.length != 0) {
-				for(let i=0;i<array.length;i++){
+				$("#even").attr("disabled", true);
+				$("#odd").attr("disabled", true);
+				for (let i = 0; i < array.length; i++) {
 					$("#table tbody").append(
 						"<tr>" +
 						"<td>" + array[i].username + "</td>" +
@@ -24,11 +25,35 @@ $(document).ready(function () {
 						"<td>" + data[i].choose + "</td>" +
 						"</tr>"
 					);
+					if (array[i].username == username) {
+						$('#monney').val(array[i].bet)
+					}
+					socket.on('result', function (data) {
+						if (array[i].username == username) {
+							let choice = array[i].choose;
+							let coin = parseInt($('#coin').text());
+							if (data.number % 2 == 0) {
+								if (choice == "Chan") {
+									$('#coin').html(parseInt(array[i].bet + coin));
+								}
+								else {
+									$('#coin').html(parseInt(coin - array[i].bet));
+								}
+							}
+							else {
+								if (choice == "Le") {
+									$('#coin').html(parseInt(array[i].bet + coin));
+								}
+								else {
+									$('#coin').html(parseInt(coin - array[i].bet));
+								}
+							}
+						}
+					});
 				}
 			}
 		})
 	});
-	// listen()
 
 	socket.on('disconnect', () => {
 		$('#mainscreen').hide();
@@ -37,11 +62,10 @@ $(document).ready(function () {
 
 	const listen = () => {
 		socket.on('time', function (data) {
-			if(typeof data.start == 'undefined') {
-				$('#text').text('Hey you! Give us roll!');
+			if (typeof data.start == 'undefined') {
+				$('#text').text('Pending...pending...pending');
 			}
-			else
-			{
+			else {
 				let interval = setInterval(function () {
 					milliseconds = Date.now() - data.start;
 					$('#text').text(10 - Math.round(milliseconds / 1000));
@@ -51,9 +75,7 @@ $(document).ready(function () {
 					}
 				}, 100);
 			}
-			
 		});
-
 		socket.on('detailOrder', function (data) {
 			$("#table tbody").append(
 				"<tr>" +
@@ -65,12 +87,10 @@ $(document).ready(function () {
 		});
 	}
 
-	//function callback when click
 	const clickButton = () => {
 		$('#text').text(textShake);
 		$('#text').addClass('shake');
 		socket.on('result', function (data) {
-			console.log(data.number)
 			eleDice.html(data.point);
 			eleText.html(data.number);
 			result = parseInt(data.number);
@@ -93,7 +113,6 @@ $(document).ready(function () {
 				$("#even").attr("disabled", false);
 				$("#odd").attr("disabled", false);
 			}, 4000);
-
 			$('#text').removeClass('shake');
 		});
 	}
@@ -154,5 +173,4 @@ $(document).ready(function () {
 			$("#error").text("Please input money order");
 		}
 	});
-
 });
