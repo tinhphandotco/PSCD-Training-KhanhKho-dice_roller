@@ -5,7 +5,7 @@ const io = require('socket.io')(http);
 const mongoose = require('mongoose');
 const User = mongoose.model("User");
 const delayTime = 300;
-var start;
+let players = [];
 
 const rollTheDice = () => {
     return new Promise((resolve, reject) => {
@@ -31,18 +31,45 @@ const rollTheDice = () => {
 }
 
 const diceGame = (io) => {
+    let start,gameStatus, resultNumber;
     setInterval(function () {
         start = Date.now()
-        io.sockets.emit('time', start);
+        gameStatus="starting"
+        io.sockets.emit('time', {status: gameStatus,start:start});
         let interval = setInterval(function () {
             if (Date.now() - start >= 10000) {
                 rollTheDice()
-                    .then((data) => {
-                        var result ={
-                            number : data.number,
-                            point : data.output
+                    .then((data) => {                       
+                        resultNumber = data.number
+                        if (players.length != 0) {
+                            players.forEach(player => {
+                                let amoutCoin
+                                if (resultNumber % 2) {
+                                    if (player.choose == 'Le') {
+                                        amoutCoin = player.bet
+                                    }
+                                    else {
+                                        amoutCoin = -(player.bet)
+                                    }
+                                }
+                                else {
+                                    if (player.choose == 'Le') {
+                                        amoutCoin = -(player.bet)
+                                    }
+                                    else {
+                                        amoutCoin = player.bet
+                                    }
+                                }
+                                User.updateOne({ username: player.username }, {
+                                    $inc: { coin: amoutCoin }
+                                },function (err, affected, resp) {})
+                                gameStatus="end"
+                                io.sockets.emit('result', {status:gameStatus, number: data.number,point: data.output});
+                            })
                         }
-                        io.sockets.emit('result', result);
+                        players = [];
+                        gameStatus="end"
+                        io.sockets.emit('result', {status:gameStatus, number: data.number,point: data.output});
                     })
                     .catch((err) => {
                         console.log("ERROR: ", err.message)
@@ -54,16 +81,17 @@ const diceGame = (io) => {
 
     io.on('connection', function (socket) {
         console.log('a user connected');
-        socket.emit('time', start);
-        socket.on('totalcoin', function (data) {
-            User.updateOne({ username: data.username }, {
-                coin: data.coin
-            }, function (err, affected, resp) {
-            })
-        });
+        gameStatus="starting"
+        socket.emit('time',{status: gameStatus,start:start});
         socket.on('detailOrder', function (data) {
+            players.push({
+                username: data.username,
+                bet: data.moneyOrder,
+                choose: data.stateOrder
+            })
             io.emit('detailOrder', data);
         });
+        // socket.emit('listbet', players);
         socket.on('username', function (username) {
             io.emit('username', username);
         });

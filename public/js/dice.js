@@ -1,30 +1,76 @@
-
 $(document).ready(function () {
-
-	var socket = io();
-	socket.on('detailOrder', function (data) {
-		$("#table tbody").append(
-			"<tr>" +
-			"<td>" + data.username + "</td>" +
-			"<td>" + data.moneyOrder + "</td>" +
-			"<td>" + data.stateOrder + "</td>" +
-			"</tr>"
-		);
-	});
-
 	//elements
 	const eleDice = $('#dice');
 	const eleText = $('#text');
 	const textShake = 'Shake, shake, shake...';
 	const stateEven = "Chan";
 	const stateOdd = "Le";
-	var result;
+	let result;
+	let socket = io();
+
+	socket.on('connect', () => {
+		$('#loadingscreen').css("display", "none");
+		$('#mainscreen').show();
+		listen();
+		socket.on('listbet', function (data) {
+			let array = new Array();
+			array = data;
+			if (array.length != 0) {
+				for(let i=0;i<array.length;i++){
+					$("#table tbody").append(
+						"<tr>" +
+						"<td>" + array[i].username + "</td>" +
+						"<td>" + data[i].bet + "</td>" +
+						"<td>" + data[i].choose + "</td>" +
+						"</tr>"
+					);
+				}
+			}
+		})
+	});
+	// listen()
+
+	socket.on('disconnect', () => {
+		$('#mainscreen').hide();
+		$('#loadingscreen').css("display", "block");
+	});
+
+	const listen = () => {
+		socket.on('time', function (data) {
+			if(typeof data.start == 'undefined') {
+				$('#text').text('Hey you! Give us roll!');
+			}
+			else
+			{
+				let interval = setInterval(function () {
+					milliseconds = Date.now() - data.start;
+					$('#text').text(10 - Math.round(milliseconds / 1000));
+					if (milliseconds >= 10000) {
+						clickButton();
+						clearInterval(interval);
+					}
+				}, 100);
+			}
+			
+		});
+
+		socket.on('detailOrder', function (data) {
+			$("#table tbody").append(
+				"<tr>" +
+				"<td>" + data.username + "</td>" +
+				"<td>" + data.moneyOrder + "</td>" +
+				"<td>" + data.stateOrder + "</td>" +
+				"</tr>"
+			);
+		});
+	}
 
 	//function callback when click
 	const clickButton = () => {
 		$('#text').text(textShake);
 		$('#text').addClass('shake');
 		socket.on('result', function (data) {
+			console.log(data.number)
 			eleDice.html(data.point);
 			eleText.html(data.number);
 			result = parseInt(data.number);
@@ -51,18 +97,7 @@ $(document).ready(function () {
 			$('#text').removeClass('shake');
 		});
 	}
-
-	socket.on('time', function (time) {
-		let interval = setInterval(function () {
-			milliseconds = Date.now() - time;
-			$('#text').text(10 - Math.round(milliseconds / 1000));
-			if (milliseconds >= 10000) {
-				clickButton();
-				clearInterval(interval);
-			}
-		}, 100);
-	})
-
+	//when click button even
 	$("#even").click(function () {
 		if ($("#monney").val() != '') {
 			let moneyOrder = parseInt($('#monney').val());
@@ -73,22 +108,12 @@ $(document).ready(function () {
 			};
 			socket.emit('detailOrder', detailOrder);
 			socket.on('result', function (data) {
-				let coin = parseInt($('#coin').text());		
-				if (parseInt(data.number) % 2 == 0) {				
+				let coin = parseInt($('#coin').text());
+				if (parseInt(data.number) % 2 == 0) {
 					$('#coin').html(parseInt(moneyOrder + coin));
-					var datails = {
-						coin: parseInt(moneyOrder + coin),
-						username: username
-					}
-					socket.emit('totalcoin', datails);
 				}
-				else {		
+				else {
 					$('#coin').html(parseInt(coin - moneyOrder));
-					var datails = {
-						coin: parseInt(coin - moneyOrder),
-						username: username
-					}
-					socket.emit('totalcoin', datails);
 				}
 				moneyOrder = 0;
 			});
@@ -101,7 +126,7 @@ $(document).ready(function () {
 		}
 
 	});
-
+	//when click button odd
 	$("#odd").click(function () {
 		if ($("#monney").val() != '') {
 			let moneyOrder = parseInt($('#monney').val());
@@ -115,19 +140,9 @@ $(document).ready(function () {
 				let coin = parseInt($('#coin').text());
 				if (parseInt(data.number) % 2 == 1) {
 					$('#coin').html(parseInt(moneyOrder + coin));
-					var datails = {
-						coin: parseInt(moneyOrder + coin),
-						username: username
-					}
-					socket.emit('totalcoin', datails);
 				}
 				else {
 					$('#coin').html(parseInt(coin - moneyOrder));
-					var datails = {
-						coin: parseInt(coin - moneyOrder),
-						username: username
-					}
-					socket.emit('totalcoin', datails);
 				}
 				moneyOrder = 0;
 			});
