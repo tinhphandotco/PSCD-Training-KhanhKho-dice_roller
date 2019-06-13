@@ -13,8 +13,8 @@ const login = async (req, res) => {
     let password = req.body.password;
     let user = await User.findOne({ username }).exec();
     if (username && password) {
-        // Recapcha.checkRecapcha(req)
-        //     .then(() => {
+        Recapcha.checkRecapcha(req)
+            .then(() => {
                 if (!user) {
                     return res.render("login", {
                         messageboth: "Username or Password Incorrect !",
@@ -42,13 +42,13 @@ const login = async (req, res) => {
                     delete req.session.redirectTo;
                     res.redirect(redirectTo);
                 }
-            // })
-            // .catch((body) => {
-            //         return res.render('login', {
-            //             messageboth: "Failed captcha verification !",
-            //             username
-            //         })
-            // })
+            })
+            .catch((body) => {
+                    return res.render('login', {
+                        messageboth: "Failed captcha verification !",
+                        username
+                    })
+            })
     }
     else {
         res.render("login", {
