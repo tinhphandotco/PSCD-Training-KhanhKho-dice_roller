@@ -29,54 +29,57 @@ const rollTheDice = () => {
 
 const diceGame = (io) => {
     let start, gameStatus, resultNumber;
-    setInterval(function () {
+    const startingGame = () => {
         start = Date.now()
         gameStatus = "starting"
         io.sockets.emit('time', { status: gameStatus, start: start });
-        let interval = setInterval(function () {
-            if (Date.now() - start >= 10000) {
-                rollTheDice()
-                    .then((data) => {
-                        resultNumber = data.number
-                        if (players.length != 0) {
-                            players.forEach(player => {
-                                let amoutCoin
-                                if (resultNumber % 2) {
-                                    if (player.choose == 'Le') {
-                                        amoutCoin = player.bet
-                                    }
-                                    else {
-                                        amoutCoin = -(player.bet)
-                                    }
-                                }
-                                else {
-                                    if (player.choose == 'Le') {
-                                        amoutCoin = -(player.bet)
-                                    }
-                                    else {
-                                        amoutCoin = player.bet
-                                    }
-                                }
-                                User.updateOne({ username: player.username }, {
-                                    $inc: { coin: amoutCoin }
-                                }, function (err, affected, resp) { })
-                                gameStatus = "end"
-                                io.sockets.emit('result', { status: gameStatus, number: data.number, point: data.output });
-                            })
+        setTimeout(() => {
+            startedGame();
+        }, 10000)
+    }
+    const startedGame = () => {
+        gameStatus = "started"
+        rollTheDice()
+            .then((data) => {
+                resultNumber = data.number
+                players.forEach(player => {
+                    let amoutCoin
+                    if (resultNumber % 2) {
+                        if (player.choose == 'Le') {
+                            amoutCoin = player.bet
                         }
                         else {
-                            gameStatus = "end";
-                            io.sockets.emit('result', { status: gameStatus, number: data.number, point: data.output });
+                            amoutCoin = -(player.bet)
                         }
-                        players = [];
-                    })
-                    .catch((err) => {
-                        console.log("ERROR: ", err.message)
-                    })
-                clearInterval(interval);
-            }
-        }, 100);
-    }, 15000)
+                    }
+                    else {
+                        if (player.choose == 'Le') {
+                            amoutCoin = -(player.bet)
+                        }
+                        else {
+                            amoutCoin = player.bet
+                        }
+                    }
+                    User.updateOne({ username: player.username }, {
+                        $inc: { coin: amoutCoin }
+                    }, function (err, affected, resp) { })
+                })
+                io.sockets.emit('result', { status: gameStatus, number: data.number, point: data.output });
+                players = [];
+            })
+            .catch((err) => {
+                console.log("ERROR: ", err.message)
+            })
+        setTimeout(() => {
+            endGame();
+        }, 3000)
+    }
+    const endGame = () => {
+        setTimeout(() => {
+            startingGame();
+        }, 3000)
+    }
+    startingGame();
 
     io.on('connection', function (socket) {
         gameStatus = "starting"

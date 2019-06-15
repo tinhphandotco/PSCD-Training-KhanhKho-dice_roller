@@ -48,6 +48,7 @@ $(document).ready(function () {
 									$('#coin').html(parseInt(coin - array[i].bet));
 								}
 							}
+							array[i].bet=0;
 						}
 					});
 				}
