@@ -28,7 +28,7 @@ const rollTheDice = () => {
 }
 
 const diceGame = (io) => {
-    let start, gameStatus, resultNumber;
+    let start, gameStatus, resultNumber,rusultPoint;
     const startingGame = () => {
         start = Date.now()
         gameStatus = "starting"
@@ -41,7 +41,8 @@ const diceGame = (io) => {
         gameStatus = "started"
         rollTheDice()
             .then((data) => {
-                resultNumber = data.number
+                resultNumber = data.number;
+                rusultPoint= data.output;
                 players.forEach(player => {
                     let amoutCoin
                     if (resultNumber % 2) {
@@ -82,7 +83,9 @@ const diceGame = (io) => {
     startingGame();
 
     io.on('connection', function (socket) {
-        gameStatus = "starting"
+        if(gameStatus=="started") {
+            socket.emit('results', { status: gameStatus, number: resultNumber, point: rusultPoint });
+        }
         socket.emit('time', { status: gameStatus, start: start });
         socket.on('detailOrder', function (data) {
             players.push({

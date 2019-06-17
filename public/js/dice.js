@@ -4,10 +4,15 @@ $(document).ready(function () {
 	const textShake = 'Shake, shake, shake...';
 	const stateEven = "Chan";
 	const stateOdd = "Le";
-	let result;
+	let result,tmp;
 	let socket = io();
 
 	socket.on('connect', () => {
+		socket.on('results', function (data) {
+			tmp=data.number;
+			eleDice.html(data.point);
+			eleText.html(data.number);
+		})
 		$('#loadingscreen').css("display", "none");
 		$('#mainscreen').show();
 		listen();
@@ -48,7 +53,7 @@ $(document).ready(function () {
 									$('#coin').html(parseInt(coin - array[i].bet));
 								}
 							}
-							array[i].bet=0;
+							array[i].bet = 0;
 						}
 					});
 				}
@@ -88,10 +93,13 @@ $(document).ready(function () {
 		});
 	}
 
-	const clickButton = () => {
+	const clickButton = () => {	
 		$('#text').text(textShake);
 		$('#text').addClass('shake');
+		$('#text').text(tmp);
 		socket.on('result', function (data) {
+			number = data.number;
+			point = data.point;
 			eleDice.html(data.point);
 			eleText.html(data.number);
 			result = parseInt(data.number);
