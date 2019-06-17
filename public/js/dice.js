@@ -96,7 +96,10 @@ $(document).ready(function () {
 	const clickButton = () => {	
 		$('#text').text(textShake);
 		$('#text').addClass('shake');
-		$('#text').text(tmp);
+		if(tmp){
+			$('#text').removeClass('shake');
+			$('#text').text(tmp);
+		}
 		socket.on('result', function (data) {
 			number = data.number;
 			point = data.point;
