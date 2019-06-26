@@ -8,14 +8,43 @@ $(document).ready(function () {
 	let socket = io();
 
 	socket.on('connect', () => {
-		socket.on('results', function (data) {
+		$('#loadingscreen').css("display", "none");
+		$('#mainscreen').show();
+		socket.on('time', function (data) {
+			if (typeof data.start == 'undefined') {
+				$('#text').text('Pending...pending...pending');
+			}
+			else {
+				let interval = setInterval(function () {
+					milliseconds = Date.now() - data.start;
+					$('#text').text(10 - Math.round(milliseconds / 1000));
+					if (milliseconds >= 10000) {
+						clickButton();
+						$("#even").attr("disabled", true);
+						$("#odd").attr("disabled", true);
+						clearInterval(interval);
+					}
+				}, 100);
+				$("tbody").empty();
+				$("#even").attr("disabled", false);
+				$("#odd").attr("disabled", false);
+			}
+		});
+		socket.on('detailOrder', function (data) {
+			$("#table tbody").append(
+				"<tr>" +
+				"<td>" + data.username + "</td>" +
+				"<td>" + data.moneyOrder + "</td>" +
+				"<td>" + data.stateOrder + "</td>" +
+				"</tr>"
+			);
+		});
+
+		socket.on('resultStarted', function (data) {
 			tmp=data.number;
 			eleDice.html(data.point);
 			eleText.html(data.number);
 		})
-		$('#loadingscreen').css("display", "none");
-		$('#mainscreen').show();
-		listen();
 		socket.on('listbet', function (data) {
 			let array = new Array();
 			array = data;
@@ -66,39 +95,13 @@ $(document).ready(function () {
 		$('#loadingscreen').css("display", "block");
 	});
 
-	const listen = () => {
-		socket.on('time', function (data) {
-			if (typeof data.start == 'undefined') {
-				$('#text').text('Pending...pending...pending');
-			}
-			else {
-				let interval = setInterval(function () {
-					milliseconds = Date.now() - data.start;
-					$('#text').text(10 - Math.round(milliseconds / 1000));
-					if (milliseconds >= 10000) {
-						clickButton();
-						clearInterval(interval);
-					}
-				}, 100);
-			}
-		});
-		socket.on('detailOrder', function (data) {
-			$("#table tbody").append(
-				"<tr>" +
-				"<td>" + data.username + "</td>" +
-				"<td>" + data.moneyOrder + "</td>" +
-				"<td>" + data.stateOrder + "</td>" +
-				"</tr>"
-			);
-		});
-	}
-
 	const clickButton = () => {	
 		$('#text').text(textShake);
 		$('#text').addClass('shake');
-		if(tmp){
+		if(tmp!=0){
 			$('#text').removeClass('shake');
 			$('#text').text(tmp);
+			tmp=0;
 		}
 		socket.on('result', function (data) {
 			number = data.number;
@@ -120,11 +123,6 @@ $(document).ready(function () {
 						$(this).parents("tr").css("color", "red");
 				});
 			}
-			setTimeout(function () {
-				$("tbody").empty();
-				$("#even").attr("disabled", false);
-				$("#odd").attr("disabled", false);
-			}, 4000);
 			$('#text').removeClass('shake');
 		});
 	}
@@ -155,7 +153,6 @@ $(document).ready(function () {
 		else {
 			$("#error").text("Please input money order");
 		}
-
 	});
 	//when click button odd
 	$("#odd").click(function () {

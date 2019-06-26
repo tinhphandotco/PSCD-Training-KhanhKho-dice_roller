@@ -84,7 +84,7 @@ const diceGame = (io) => {
 
     io.on('connection', function (socket) {
         if(gameStatus=="started") {
-            socket.emit('results', { status: gameStatus, number: resultNumber, point: rusultPoint });
+            socket.emit('resultStarted', { status: gameStatus, number: resultNumber, point: rusultPoint });
         }
         socket.emit('time', { status: gameStatus, start: start });
         socket.on('detailOrder', function (data) {
