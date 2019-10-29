@@ -19,7 +19,7 @@
     "express": "^4.17.0",
     "express-joi-validator": "^2.0.1",
     "express-session": "^1.16.1",
-    "mongoose": "^5.5.10",
+    "mongoose": "^5.7.5",
     "morgan": "^1.9.1",
     "passport": "^0.4.0",
     "path": "^0.12.7",
